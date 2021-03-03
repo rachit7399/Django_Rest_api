@@ -2,6 +2,12 @@ from snippets.models import Snippet
 from snippets.serializers import SnippetSerializer
 from rest_framework import mixins
 from rest_framework import generics
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated  
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status, viewsets
 
 '''
 Using generics
@@ -15,6 +21,11 @@ class SnippetList(generics.ListCreateAPIView):
 class SnippetList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
+
+    authentication_classes = [SessionAuthentication, BasicAuthentication] 
+    # authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
